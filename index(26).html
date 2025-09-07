@@ -1,0 +1,158 @@
+DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Untuk Kamu</title>
+<style>
+  body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #ffdde1, #ee9ca7);
+    color: #fff;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    overflow: hidden;
+    text-align: center;
+  }
+  h1 {
+    font-size: 2.2em;
+    margin-bottom: 20px;
+    animation: fadeIn 1.5s ease;
+  }
+  button {
+    background: #ffb6c1;
+    border: none;
+    padding: 12px 25px;
+    margin: 10px;
+    font-size: 1em;
+    color: white;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(255, 182, 193, 0.4);
+  }
+  button:hover {
+    background: #ff85a1;
+    transform: scale(1.05);
+  }
+  #message {
+    display: none;
+    font-size: 1.8em;
+    margin-top: 20px;
+    animation: fadeIn 1s ease forwards;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+  }
+  /* Sambutan overlay */
+  #sambutan {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(255, 192, 203, 0.95);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    color: #fff;
+    font-size: 2em;
+    animation: fadeIn 1s ease;
+    z-index: 1000;
+  }
+  #sambutan p {
+    font-size: 1.2em;
+    margin-top: 10px;
+  }
+  @keyframes fadeOut {
+    to { opacity: 0; visibility: hidden; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Overlay Sambutan -->
+<div id="sambutan">
+  <div>💌 Hai 💌</div>
+  <p>Aku punya sesuatu buat kamu...</p>
+</div>
+
+<h1><br>ell, aku gamon, kamu mau balikan sama aku ga? </h1>
+<div>
+  <button id="btnIya">mauu 💕</button>
+  <button id="btnTidak">gamau</button>
+</div>
+<div id="message">serius mauu? love youu</div>
+
+<canvas id="canvas"></canvas>
+
+<script>
+  // Hilangkan sambutan setelah 3 detik
+  setTimeout(() => {
+    document.getElementById("sambutan").style.animation = "fadeOut 1s forwards";
+    setTimeout(() => {
+      document.getElementById("sambutan").remove();
+    }, 1000);
+  }, 2000);
+
+  const btnIya = document.getElementById("btnIya");
+  const btnTidak = document.getElementById("btnTidak");
+  const message = document.getElementById("message");
+  const canvas = document.getElementById("canvas");
+  const ctx = canvas.getContext("2d");
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  let hearts = [];
+
+  btnIya.addEventListener("click", () => {
+    message.style.display = "block";
+    for (let i = 0; i < 50; i++) {
+      hearts.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        size: Math.random() * 20 + 10,
+        speed: Math.random() * 2 + 1,
+        color: "pink"
+      });
+    }
+  });
+
+  btnTidak.addEventListener("mouseover", () => {
+    const x = Math.random() * window.innerWidth;
+    const y = Math.random() * window.innerHeight;
+    btnTidak.style.position = "absolute";
+    btnTidak.style.left = x + "px";
+    btnTidak.style.top = y + "px";
+  });
+
+  function drawHearts() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    hearts.forEach((heart, index) => {
+      ctx.fillStyle = heart.color;
+      ctx.beginPath();
+      ctx.moveTo(heart.x, heart.y);
+      ctx.bezierCurveTo(heart.x, heart.y - heart.size / 2, heart.x - heart.size, heart.y - heart.size / 2, heart.x - heart.size, heart.y);
+      ctx.bezierCurveTo(heart.x - heart.size, heart.y + heart.size, heart.x, heart.y + heart.size * 1.5, heart.x, heart.y + heart.size * 2);
+      ctx.bezierCurveTo(heart.x, heart.y + heart.size * 1.5, heart.x + heart.size, heart.y + heart.size, heart.x + heart.size, heart.y);
+      ctx.bezierCurveTo(heart.x + heart.size, heart.y - heart.size / 2, heart.x, heart.y - heart.size / 2, heart.x, heart.y);
+      ctx.fill();
+      heart.y -= heart.speed;
+      if (heart.y < -20) hearts.splice(index, 1);
+    });
+    requestAnimationFrame(drawHearts);
+  }
+  drawHearts();
+</script>
+
+</body>
+</html>
